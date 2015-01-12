@@ -285,6 +285,7 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
+
   };
 
   // Like extend, but doesn't ever overwrite a key that already
@@ -342,6 +343,7 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
+    setTimeout(func, wait);
   };
 
 
@@ -356,6 +358,16 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    var length = array.length;
+    var newarray = array.slice(0,length);
+    var storage
+    for (var i = 0; i < newarray.length; i++) {
+      var random = Math.floor(Math.random()*length);
+      storage = newarray[i];
+      newarray[i] = newarray[random];
+      newarray[random] = storage;
+    }
+    return newarray;
   };
 
 
