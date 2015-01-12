@@ -56,12 +56,14 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
-    if (collection.isArry) {
+    if (Array.isArray(collection)) {
       for (var i = 0; i < collection.length; i++) {
-
+        iterator(collection[i],i,collection);
       }
-    } else if (collection.typeof === 'object') {
-
+    } else {
+        for(var key in collection) {
+          iterator(collection[key], key, collection);
+        }
     }
   };
 
@@ -224,12 +226,43 @@
   // Determine whether all of the elements match a truth test.
   _.every = function(collection, iterator) {
     // TIP: Try re-using reduce() here.
+    var truthy = true;
+    if (iterator === undefined) {
+      for (var i = 0; i < collection.length; i++) {
+        if (!collection[i]) {
+          truthy = false;
+        }
+      }
+    } else {
+      for (var i = 0; i < collection.length; i++) {
+      if (!iterator(collection[i])) {
+        truthy = false;
+      }
+    }
+    }
+    return truthy;
+
   };
 
   // Determine whether any of the elements pass a truth test. If no iterator is
   // provided, provide a default one
   _.some = function(collection, iterator) {
     // TIP: There's a very clever way to re-use every() here.
+    var truthy = false;
+    if (iterator === undefined) {
+      for (var i = 0; i < collection.length; i++) {
+        if (collection[i]) {
+          truthy = true;
+        }
+      }
+    } else {
+      for (var i = 0; i < collection.length; i++) {
+      if (iterator(collection[i])) {
+        truthy = true;
+      }
+    }
+    }
+    return truthy;
   };
 
 
