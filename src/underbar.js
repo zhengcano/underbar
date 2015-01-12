@@ -56,6 +56,13 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
+    if (collection.isArry) {
+      for (var i = 0; i < collection.length; i++) {
+
+      }
+    } else if (collection.typeof === 'object') {
+
+    }
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -170,6 +177,35 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+    var total
+    if (Array.isArray(collection)) {
+      if (accumulator === undefined) {
+        total = collection[0];
+        for (var i = 1; i < collection.length; i++) {
+          total = iterator(total, collection[i]);
+        }
+      } else {
+        total = accumulator;
+        for (var j = 0; j < collection.length; j++) {
+          total = iterator(total, collection[j]);
+        }
+      }
+    } else {
+      if (accumulator === undefined) {
+        total = collection[a];
+        for (var key in collection) {
+          if (key !== 'a') {
+            total = iterator(total, collection[key]);
+          }
+        }
+      } else {
+        total = accumulator;
+        for (var key in collection) {
+          total = iterator(total, collection[key]);
+        }
+      }
+    }
+    return total;
   };
 
   // Determine if the array or object contains a given value (using `===`).
