@@ -285,12 +285,32 @@
   //     bla: "even more stuff"
   //   }); // obj1 now contains key1, key2, key3 and bla
   _.extend = function(obj) {
-
+    var arg = arguments.length;
+    for (var i = 1; i < arg; i++) {
+      for (var key in arguments[i]) {
+        obj[key] = arguments[i][key];
+      }
+    }
+    return obj;
   };
 
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+    var arg = arguments.length;
+    var obj2 = {};
+    for (var i = arg; i > 0; i--) {
+      for (var key in arguments[i]) {
+        obj2[key] = arguments[i][key];
+      }
+    }
+    for (var key in obj) {
+      obj2[key] = obj[key];
+    }
+    for (var key in obj2) {
+      obj[key] = obj2[key];
+    }
+    return obj;
   };
 
 
@@ -334,6 +354,21 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    var alreadyCalled = false;
+    var called = {};
+    var result;
+
+    return function(key) {
+    if (called.hasOwnProperty(key)) {
+      alreadyCalled = true;
+    }
+      if (!alreadyCalled) {
+      result = func.apply(this, arguments);
+      called[key] = result;
+    }
+
+      return called[key];
+    };
   };
 
   // Delays a function for the given number of milliseconds, and then calls
@@ -343,7 +378,19 @@
   // parameter. For example _.delay(someFunction, 500, 'a', 'b') will
   // call someFunction('a', 'b') after 500ms
   _.delay = function(func, wait) {
-    setTimeout(func, wait);
+    var length = arguments.length;
+    var arg = [];
+    if (length > 2) {
+      for (var i = 2; i < length; i++) {
+        arg.push(arguments[i]);
+      }
+      setTimeout(function () {
+        func.apply(null, arg);
+      }, wait);
+    }
+    else {
+      setTimeout(func, wait);
+    }
   };
 
 
@@ -361,11 +408,22 @@
     var length = array.length;
     var newarray = array.slice(0,length);
     var storage
-    for (var i = 0; i < newarray.length; i++) {
-      var random = Math.floor(Math.random()*length);
-      storage = newarray[i];
-      newarray[i] = newarray[random];
-      newarray[random] = storage;
+    var equal = true;
+    function sortout() {
+      for (var i = 0; i < length; i++) {
+        var random = Math.floor(Math.random()*length);
+        storage = newarray[i];
+        newarray[i] = newarray[random];
+        newarray[random] = storage;
+      }
+    }
+    while (equal) {
+      sortout();
+      for (var j = 0; j < length; j++) {
+        if (array[j] !== newarray[j]) {
+          equal = false;
+        }
+      }
     }
     return newarray;
   };
